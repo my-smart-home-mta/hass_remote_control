@@ -1,0 +1,29 @@
+DEBUG | 02/27/2021 10:57:18 AM | Using selector: EpollSelector
+INFO | 02/27/2021 10:57:32 AM | 127.0.0.1 [27/Feb/2021:03:57:31 +0000] "POST /challenge_txt HTTP/1.1" 400 393 "-" "PostmanRuntime/7.26.8"
+DEBUG | 02/27/2021 10:57:59 AM | Using selector: EpollSelector
+INFO | 02/27/2021 10:58:01 AM | 127.0.0.1 [27/Feb/2021:03:58:01 +0000] "POST /challenge_txt HTTP/1.1" 400 236 "-" "PostmanRuntime/7.26.8"
+DEBUG | 02/27/2021 11:03:59 AM | Using selector: EpollSelector
+INFO | 02/27/2021 11:04:03 AM | 127.0.0.1 [27/Feb/2021:04:04:03 +0000] "POST /challenge_txt HTTP/1.1" 200 651 "-" "PostmanRuntime/7.26.8"
+DEBUG | 02/27/2021 11:18:55 AM | Using selector: EpollSelector
+ERROR | 02/27/2021 11:19:00 AM | Error handling request
+Traceback (most recent call last):
+  File "/home/ftu191/.local/lib/python3.8/site-packages/aiohttp/web_protocol.py", line 422, in _handle_request
+    resp = await self._request_handler(request)
+  File "/home/ftu191/.local/lib/python3.8/site-packages/aiohttp/web_app.py", line 499, in _handle
+    resp = await handler(request)
+  File "server.py", line 144, in challenge_txt
+    'X-Auth-Email': cloudflare_email,
+NameError: name 'cloudflare_email' is not defined
+INFO | 02/27/2021 11:19:00 AM | 127.0.0.1 [27/Feb/2021:04:19:00 +0000] "POST /challenge_txt HTTP/1.1" 500 244 "-" "PostmanRuntime/7.26.8"
+ERROR | 02/27/2021 11:19:19 AM | Error handling request
+Traceback (most recent call last):
+  File "/home/ftu191/.local/lib/python3.8/site-packages/aiohttp/web_protocol.py", line 422, in _handle_request
+    resp = await self._request_handler(request)
+  File "/home/ftu191/.local/lib/python3.8/site-packages/aiohttp/web_app.py", line 499, in _handle
+    resp = await handler(request)
+  File "server.py", line 144, in challenge_txt
+    'X-Auth-Email': cloudflare_email,
+NameError: name 'cloudflare_email' is not defined
+INFO | 02/27/2021 11:19:19 AM | 127.0.0.1 [27/Feb/2021:04:19:19 +0000] "POST /challenge_txt HTTP/1.1" 500 244 "-" "PostmanRuntime/7.26.8"
+DEBUG | 02/27/2021 11:22:03 AM | Using selector: EpollSelector
+INFO | 02/27/2021 11:22:10 AM | 127.0.0.1 [27/Feb/2021:04:22:09 +0000] "POST /challenge_txt HTTP/1.1" 400 266 "-" "PostmanRuntime/7.26.8"

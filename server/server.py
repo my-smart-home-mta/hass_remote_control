@@ -39,11 +39,16 @@ FERNET_TOKENS = [
 ]
 
 app_client_id = os.getenv('APP_CLIENT_ID')
-cloudflare_email = os.getenv('CLOUDFLARE_EMAIL')
-cloudflare_api_key = os.getenv('CLOUDFLARE_API_KEY')
+cloudflare_api_token = os.getenv('CLOUDFLARE_API_TOKEN')
 cloudflare_zone = os.getenv('CLOUDFLARE_ZONE')
 hass_basedomain=os.getenv('HASSCLOUD_BASEDOMAIN')
 snitun_server=os.getenv('SNITUN_SERVER')
+ 
+cloudflare_request_header = {
+'Content-Type': 'application/json',
+'Authorization': f'Bearer {cloudflare_api_token}'
+}
+
 
 
 with open("jwks.json") as f:
@@ -125,6 +130,7 @@ async def challenge_txt(request):
         return web.json_response(status=401, body=data_err)
     
     domain = get_and_create_domain(resp["email"])
+    domain = 'phuctu97.ui.191lab.tech'
     request = await request.json()
 
     value = request["txt"]
@@ -138,14 +144,8 @@ async def challenge_txt(request):
         "proxied": False
     }
     payload = json.dumps(payload)
-    # payload = f"{"type":"TXT","name":"_acme-challenge.{domain}.phuctu97.tech","content":"1234567","ttl":120,"priority":10,"proxied":"false"}""
-    headers = {
-    'X-Auth-Email': cloudflare_email,
-    'Content-Type': 'application/json',
-    'X-Auth-Key': cloudflare_api_key,
-    }
     try:
-        conn.request("POST", "/client/v4/zones/{cloudflare_zone}/dns_records", payload, headers)
+        conn.request("POST", f"/client/v4/zones/{cloudflare_zone}/dns_records", payload, cloudflare_request_header)
         res = conn.getresponse()
         data = res.read()
         data_2 = data.decode("utf-8")
@@ -205,17 +205,18 @@ cursor = connection.cursor()
 cursor.execute("CREATE TABLE IF NOT EXISTS peers (hostname TEXT, valid datetime, aes_key bytes, aes_iv bytes, throttling integer)")
 cursor.execute("CREATE TABLE IF NOT EXISTS users (domain TEXT, email text)")
 
+
+# curl -X GET "https://api.cloudflare.com/client/v4/zones/cd7d0123e3012345da9420df9514dad0" \
+#      -H "Content-Type:application/json" \
+#      -H "Authorization: Bearer YQSn-xWAQiiEh9qM58wZNnyQS7FUdoqGIUAbrh7T"
+
+
 async def get_dns(request):
 
     conn = http.client.HTTPSConnection("api.cloudflare.com")
     
-    headers = {
-    'X-Auth-Email': cloudflare_email,
-    'Content-Type': 'application/json',
-    'X-Auth-Key': cloudflare_api_key
-    }
 
-    conn.request("GET", f"/client/v4/zones/{cloudflare_zone}/dns_records/",headers = headers)
+    conn.request("GET", f"/client/v4/zones/{cloudflare_zone}/dns_records/",headers = cloudflare_request_header)
     res = conn.getresponse()
     data = res.read()
     return web.Response(status=res.status, body=data)
@@ -241,13 +242,8 @@ async def challenge_cleanup(request):
          
     conn = http.client.HTTPSConnection("api.cloudflare.com")
     
-    headers = {
-    'X-Auth-Email': cloudflare_email,
-    'Content-Type': 'application/json',
-    'X-Auth-Key': cloudflare_api_key
-    }
 
-    conn.request("GET", f"/client/v4/zones/{cloudflare_zone}/dns_records/?type=TXT&name=_acme-challenge.{domain}",headers = headers)
+    conn.request("GET", f"/client/v4/zones/{cloudflare_zone}/dns_records/?type=TXT&name=_acme-challenge.{domain}",headers = cloudflare_request_header)
     res = conn.getresponse()
     data = res.read()
 
@@ -259,13 +255,9 @@ async def challenge_cleanup(request):
             count += 1
             conn2 = http.client.HTTPSConnection("api.cloudflare.com")
             id = key['id']
-            headers2 = {
-            'X-Auth-Email': cloudflare_email,
-            'Content-Type': 'application/json',
-            'X-Auth-Key': cloudflare_api_key,
-            }
+        
 
-            conn2.request(f"DELETE", f"/client/v4/zones/{cloudflare_zone}/dns_records/{id}",headers = headers2)
+            conn2.request(f"DELETE", f"/client/v4/zones/{cloudflare_zone}/dns_records/{id}",headers = cloudflare_request_header)
             res = conn2.getresponse()
             data = res.read()
 
